@@ -15,27 +15,29 @@ class MainActivity : AppCompatActivity() {
         binding.calculateButton.setOnClickListener { calcutateTip() }
 
     }
-    fun calcutateTip(){
+    fun calcutateTip() {
 
-        val stringInTextField=binding.costOfService.text.toString()
-        val cost=stringInTextField.toDouble()
-        val select=binding.tipOptions.checkedRadioButtonId;
-        try {
-            val tipPrecentage = when (select) {
-                R.id.option_twenty_percent -> 0.20
-                R.id.option_eightenn_percent -> 0.18
-                else -> 0.15
-            }
-            var tip = cost * tipPrecentage
-            val roundUp = binding.roundUpSwitch.isChecked
-            if (roundUp) {
-                tip = kotlin.math.ceil(tip)
+        val stringInTextField = binding.costOfService.text.toString()
+        val cost = stringInTextField.toDoubleOrNull()
+        if (cost == null) {
+            //binding.tipResult.text = ""
 
-            }
-            val formattedTip = NumberFormat.getCurrencyInstance().format(tip)
-            binding.tipResult.text = getString(R.string.tip_amount, formattedTip)
-        }catch (e: NumberFormatException){
-            Toast.makeText(getApplicationContext(), "Introduceți costul serviciului!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext,"Introduceti costul!",Toast.LENGTH_SHORT).show()
+            return
         }
+
+        val tipPercentage = when (binding.tipOptions.checkedRadioButtonId) {
+            R.id.option_twenty_percent -> 0.20
+            R.id.option_eightenn_percent-> 0.18
+            else -> 0.15
+        }
+
+        var tip = tipPercentage * cost
+        if (binding.roundUpSwitch.isChecked) {
+            tip = kotlin.math.ceil(tip)
+        }
+
+        val formattedTip = NumberFormat.getCurrencyInstance().format(tip)
+        binding.tipResult.text = getString(R.string.tip_amount, formattedTip)
     }
 }
